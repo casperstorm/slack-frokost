@@ -134,5 +134,5 @@ const prettifyTitle = (head) => {
 }
 
 const help = () => {
-  return `Hello! I can do the following\n\`chef today\`  - todays menu\n\`chef endpoint\`  - display current endpoint\n\`chef endpoint update [endpoint]\`  - update current endpoint` 
+  return `Hello! I can do the following\n\`chef today\`  - todays menu\n\`chef tomorrow\`  - tomorrows menu\n\`chef endpoint\`  - display current endpoint\n\`chef endpoint update [endpoint]\`  - update current endpoint` 
 }
