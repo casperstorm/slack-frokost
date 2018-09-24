@@ -1,0 +1,15 @@
+{
+  "name": "slack-frokost",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "dotenv": "^6.0.0",
+    "json5": "^2.0.1",
+    "lodash": "^4.17.11",
+    "node-fetch": "^2.2.0",
+    "node-google-translate-skidz": "^1.1.2",
+    "slackbots": "^1.1.0"
+  }
+}
