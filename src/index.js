@@ -17,8 +17,6 @@ bot.on('start', () => {
   var params = {
     icon_emoji: ':male-cook::skin-tone-2:'
   }
-
-  bot.postMessageToChannel('general', 'The chef is here :wave:', params)
 })
 
 bot.on('message', async (data) => {
@@ -38,6 +36,10 @@ bot.on('message', async (data) => {
       const formattedDay = await formatDay(day)
 
       bot.postMessageToChannel('general', formattedDay, params)
+    }
+
+    if (data.text === 'chef today eng') {
+      bot.postMessageToUser(data.user, "hello")
     }
 
     if (data.text === 'chef endpoint') {
