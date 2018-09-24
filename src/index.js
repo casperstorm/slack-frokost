@@ -18,7 +18,7 @@ bot.on('start', () => {
     icon_emoji: ':male-cook::skin-tone-2:'
   }
 
-  bot.postMessageToChannel('bots', 'The chef is here :wave:', params)
+  bot.postMessageToChannel('general', 'The chef is here :wave:', params)
 })
 
 bot.on('message', async (data) => {
@@ -28,7 +28,7 @@ bot.on('message', async (data) => {
 
   if (data.type === 'message' && data.subtype !== 'bot_message') {
     if (data.text === 'chef help') {
-      bot.postMessageToChannel(data.channel, help(), params)
+      bot.postMessageToChannel('general', help(), params)
     }
 
     if (data.text === 'chef today') {
@@ -37,17 +37,17 @@ bot.on('message', async (data) => {
       const day = _.find(week.days, (x) => x.isCurrentDay)
       const formattedDay = await formatDay(day)
 
-      bot.postMessageToChannel(data.channel, formattedDay, params)
+      bot.postMessageToChannel('general', formattedDay, params)
     }
 
     if (data.text === 'chef endpoint') {
-      bot.postMessageToChannel(data.channel, `Current endpoint: ${endpoint}`, params)
+      bot.postMessageToChannel('general', `Current endpoint: ${endpoint}`, params)
     }
 
     if (data.text.includes('chef endpoint update')) {
       const matches = data.text.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi)
       endpoint = matches[0]
-      bot.postMessageToChannel(data.channel, `Endpoint has been updated: ${endpoint}`, params)
+      bot.postMessageToChannel('general', `Endpoint has been updated: ${endpoint}`, params)
     }
   }
 })
