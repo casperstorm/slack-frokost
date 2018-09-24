@@ -7,7 +7,7 @@ const _ = require('lodash')
 const dotenv = require("dotenv");
 dotenv.config()
 
-var endpoint = null
+var endpoint = 'https://www.frokost.dk/vi-tilbyder/frokostordning/meyers-koekken/frokost/'
 var bot = new SlackBot({
     token: process.env.SLACK_TOKEN,
     name: 'Chef'
@@ -18,7 +18,6 @@ bot.on('start', () => {
     icon_emoji: ':male-cook::skin-tone-2:'
   }
 
-  updateEndpoint('https://www.frokost.dk/vi-tilbyder/frokostordning/meyers-koekken/frokost/')
   bot.postMessageToChannel('bots', 'The chef is here :wave:', params)
 })
 
@@ -29,7 +28,7 @@ bot.on('message', async (data) => {
 
   if (data.type === 'message' && data.subtype !== 'bot_message') {
     if (data.text === 'chef help') {
-      bot.postMessageToChannel('bots', help(), params)
+      bot.postMessageToChannel(data.channel, help(), params)
     }
 
     if (data.text === 'chef today') {
@@ -38,18 +37,17 @@ bot.on('message', async (data) => {
       const day = _.find(week.days, (x) => x.isCurrentDay)
       const formattedDay = await formatDay(day)
 
-      bot.postMessageToChannel('bots', formattedDay, params)
+      bot.postMessageToChannel(data.channel, formattedDay, params)
     }
 
     if (data.text === 'chef endpoint') {
-      bot.postMessageToChannel('bots', `Current endpoint: ${endpoint}`, params)
+      bot.postMessageToChannel(data.channel, `Current endpoint: ${endpoint}`, params)
     }
 
     if (data.text.includes('chef endpoint update')) {
       const matches = data.text.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi)
-      const endpoint = matches[0]
-      updateEndpoint(endpoint)
-      bot.postMessageToChannel('bots', `Endpoint has been updated: ${endpoint}`, params)
+      endpoint = matches[0]
+      bot.postMessageToChannel(data.channel, `Endpoint has been updated: ${endpoint}`, params)
     }
   }
 })
@@ -103,8 +101,6 @@ const prettifyTitle = (head) => {
 
   return head
 }
-
-const updateEndpoint = (e) => endpoint = e
 
 const help = () => {
   return `Hello! I can do the following\n\`chef today\`  - todays menu\n\`chef endpoint\`  - display current endpoint\n\`chef endpoint update [endpoint]\`  - update current endpoint` 
