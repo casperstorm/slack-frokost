@@ -10,7 +10,7 @@ dotenv.config()
 
 var endpoint = 'https://www.frokost.dk/vi-tilbyder/frokostordning/meyers-koekken/frokost/'
 var bot = new SlackBot({
-    token: process.env.SLACK_DEBUG_TOKEN,
+    token: process.env.SLACK_TOKEN,
     name: 'Chef'
 })
 
@@ -44,13 +44,13 @@ bot.on('message', async (data) => {
       const week = _.find(data, (x) => x.currentWeek)
       const day = _.find(week.days, (x) => x.isCurrentDay)
       if (day.name === 'fredag') {
-        bot.postMessageToChannel('bots', "It's friday today. Derp.", params)
+        bot.postMessageToChannel('general', "It's friday today. Derp.", params)
         return
       }
       const index = _.indexOf(week.days, day)
       const tomorrow = week.days[index+1]
       const formattedDay = await formatDay(tomorrow)
-      bot.postMessageToChannel('bots', formattedDay, params)
+      bot.postMessageToChannel('general', formattedDay, params)
     }
 
     if (data.text === 'chef endpoint') {
