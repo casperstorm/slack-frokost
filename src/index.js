@@ -19,9 +19,7 @@ bot.on('start', () => {
   }
 
   updateEndpoint('https://www.frokost.dk/vi-tilbyder/frokostordning/meyers-koekken/frokost/')
-
   bot.postMessageToChannel('bots', 'The chef is here :wave:', params)
-  bot.postMessageToChannel('bots', `Using the following conent provider: ${endpoint}`, params)
 })
 
 bot.on('message', async (data) => {
