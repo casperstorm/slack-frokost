@@ -3,13 +3,14 @@ const cheerio = require('cheerio')
 const fetch = require('node-fetch')
 const JSON5 = require('json5')
 const _ = require('lodash')
+const translate = require('node-google-translate-skidz')
 
 const dotenv = require("dotenv");
 dotenv.config()
 
 var endpoint = 'https://www.frokost.dk/vi-tilbyder/frokostordning/meyers-koekken/frokost/'
 var bot = new SlackBot({
-    token: process.env.SLACK_TOKEN,
+    token: process.env.SLACK_DEBUG_TOKEN,
     name: 'Chef'
 })
 
@@ -38,8 +39,18 @@ bot.on('message', async (data) => {
       bot.postMessageToChannel('general', formattedDay, params)
     }
 
-    if (data.text === 'chef today eng') {
-      bot.postMessageToUser(data.user, "hello")
+    if (data.text === 'chef tomorrow') {
+      const data = await fetchData()
+      const week = _.find(data, (x) => x.currentWeek)
+      const day = _.find(week.days, (x) => x.isCurrentDay)
+      if (day.name === 'fredag') {
+        bot.postMessageToChannel('bots', "It's friday today. Derp.", params)
+        return
+      }
+      const index = _.indexOf(week.days, day)
+      const tomorrow = week.days[index+1]
+      const formattedDay = await formatDay(tomorrow)
+      bot.postMessageToChannel('bots', formattedDay, params)
     }
 
     if (data.text === 'chef endpoint') {
@@ -54,19 +65,37 @@ bot.on('message', async (data) => {
   }
 })
 
+const translation = async (text) => {
+  return new Promise((resolve, reject) => {
+    translate({
+      text: text,
+      source: 'dk',
+      target: 'en'
+    }, function(result) {
+      resolve(result.translation)
+    })
+  })
+}
+
 const formatDay = async (day) => {
   var dishes = ''
   var regex = /<br\s*[\/]?>/gi;
-  _.forEach(day.dishes, async (d) => {
-    const headline = prettifyTitle(d.heading)
-    const dish = d.text.replace(regex, "\n")
 
-    dishes += `*${headline}*`
+  for (let d of day.dishes) {
+    const headline = prettifyTitle(d.heading)
+    const headlineTranslated = await translation(d.heading)
+    const dish = d.text.replace(regex, "\n")
+    const dishTranslated = await translation(dish)
+
+    dishes += `*${headline}* _(${headlineTranslated})_`
     dishes += '\n'
     dishes += dish
     dishes += '\n'
     dishes += '\n'
-  })
+    dishes += dishTranslated
+    dishes += '\n'
+    dishes += '\n'
+  }
 
   return `*${day.displayDate.toUpperCase()}*\n\n${dishes}`
 }
